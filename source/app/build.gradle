@@ -20,6 +20,12 @@ run {
 defaultTasks  'run'
 
 
+/** 执行java工程2 */
+task runApp(type:JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = project.hasProperty("mainClass") ? project.getProperty("mainClass") : "com.masonliu.wanfo.xuefo.TestCollector2"
+}
+
 
 /** 打jar包
  jar {
