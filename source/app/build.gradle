@@ -10,22 +10,21 @@ apply plugin: 'java'
  或带参数
  ./gradlew run -PappArgs="['-u', 'myuser', 'some other argument', 'and/a/path']"
  **/
+//gradlew :app_java:run -PmainClass="com.masonliu.wanfo.xuefo.TestCollector" -PappArgs="['-u', 'myuser', 'some other argument', 'and/a/path']"
 apply plugin: 'application'
-mainClassName = "com.example.Main"
 run {
-    if ( project.hasProperty("appArgs") ) {
+    if (project.hasProperty("appArgs")) {
         args Eval.me(appArgs)
     }
+    mainClassName = project.hasProperty("mainClass") ? project.getProperty("mainClass") : "com.masonliu.wanfo.xuefo.TestCollector"
 }
-defaultTasks  'run'
+defaultTasks 'run'
 
-
-/** 执行java工程2 */
-task runApp(type:JavaExec) {
-    classpath = sourceSets.main.runtimeClasspath
-    main = project.hasProperty("mainClass") ? project.getProperty("mainClass") : "com.masonliu.wanfo.xuefo.TestCollector2"
-}
-
+// ./gradlew :app_java:runApp -PmainClass="com.masonliu.wanfo.xuefo.TestCollector"
+//task runApp(type:JavaExec) {
+//    classpath = sourceSets.main.runtimeClasspath
+//    main = project.hasProperty("mainClass") ? project.getProperty("mainClass") : "com.masonliu.wanfo.xuefo.TestCollector2"
+//}
 
 /** 打jar包
  jar {
