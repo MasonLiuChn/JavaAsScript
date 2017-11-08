@@ -10,35 +10,46 @@ apply plugin: 'java'
  或带参数
  ./gradlew run -PappArgs="['-u', 'myuser', 'some other argument', 'and/a/path']"
  **/
-//gradlew :app_java:run -PmainClass="com.masonliu.wanfo.xuefo.TestCollector" -PappArgs="['-u', 'myuser', 'some other argument', 'and/a/path']"
+ext {
+    defMainClassName = "com.masonliu.jiufu.TestJavaScript"
+}
+
+/** 编译class后执行**/
+//gradlew :app_java:run -PappArgs="['-u', 'myuser', 'some other argument', 'and/a/path']"
 apply plugin: 'application'
 run {
     if (project.hasProperty("appArgs")) {
         args Eval.me(appArgs)
     }
-    mainClassName = project.hasProperty("mainClass") ? project.getProperty("mainClass") : "com.masonliu.wanfo.xuefo.TestCollector"
+    mainClassName = project.hasProperty("mainClass") ? project.getProperty("mainClass") : project.ext.defMainClassName
 }
 defaultTasks 'run'
-
 // ./gradlew :app_java:runApp -PmainClass="com.masonliu.wanfo.xuefo.TestCollector"
 //task runApp(type:JavaExec) {
 //    classpath = sourceSets.main.runtimeClasspath
 //    main = project.hasProperty("mainClass") ? project.getProperty("mainClass") : "com.masonliu.wanfo.xuefo.TestCollector2"
 //}
 
-/** 打jar包
- jar {
- manifest {
- attributes 'Main-Class': mainClassName
- }
- }
- 然后执行./gradlew jar
+
+/** 打jar包  gradlew :app_java:jar -PmainClass="com.masonliu.jiufu.TestJavaScript"
+执行./gradlew jar
  **/
 jar {
+    mainClassName = project.hasProperty("mainClass") ? project.getProperty("mainClass") : project.ext.defMainClassName
     manifest {
         attributes 'Main-Class': mainClassName
-        destinationDir file('../../')
     }
+}
+
+
+/**  执行jar gradlew :app_java:runJar -PappArgs="['-u', 'myuser', 'some other argument', 'and/a/path']"       **/
+task runJar (type:Exec){
+    def myArgs = ["java", "-jar", "${project.buildDir}/libs/app_java.jar"]
+    if (project.hasProperty("appArgs")) {
+        def args = Eval.me(appArgs)
+        myArgs.addAll(args)
+    }
+    commandLine myArgs
 }
 
 //添加jar依赖
